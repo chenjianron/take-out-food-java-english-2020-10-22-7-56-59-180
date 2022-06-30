@@ -1,3 +1,6 @@
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /*
@@ -14,7 +17,66 @@ public class App {
 
     public String bestCharge(List<String> inputs) {
         //TODO: write code here
+        HashMap<String,Integer> menuMap = new HashMap<>();
+        for(String item : inputs){
+            String[] strings = item.split(" ");
+            menuMap.put(strings[0], Integer.parseInt(strings[2]));
+        }
 
-        return null;
+        List<Item> allItem = itemRepository.findAll();
+        List<SalesPromotion> allPromotion = salesPromotionRepository.findAll();
+        List<String> allHalfPriceItem = allPromotion.get(1).gethalfSalesProItemList();
+
+        String str1 = "============= Order details =============\n";
+        String str2 = "";
+        int primeSum = 0;
+        int halfProPrice = 0;
+        List<String> namesList = new ArrayList<String>();
+        for(Item item : allItem){
+            int count;
+            if( (count = menuMap.getOrDefault(item.getId(),0)) != 0){
+                int itemPrimePrice = (int) (count * item.getPrice());
+                str2 += item.getName() + " x " + count + " = " + itemPrimePrice + " yuan\n";
+                primeSum += itemPrimePrice;
+                if(allHalfPriceItem.contains(item.getId())){
+                    halfProPrice += itemPrimePrice / 2;
+                    namesList.add(item.getName());
+                }
+            }
+        }
+
+        String str3 = "-----------------------------------\n";
+        String str4 = "";
+        String[] namesArr = namesList.toArray(new String[namesList.size()]);
+        String names = String.join(",",namesArr);
+
+        if(primeSum < 30){
+            if(halfProPrice > 0){
+                str4 += "Promotion used:\n";
+                str4 += "Half price for certain dishes (" + names + "),saving " + halfProPrice + " yuan\n";
+                str4 += "-----------------------------------\n";
+                str4 += String.format("In total: %d yuan\n", primeSum - halfProPrice);
+                str4 += "===================================";
+            } else {
+                str4 += String.format("In total: %d yuan\n", primeSum - halfProPrice);
+                str4 += "===================================";
+            }
+        } else {
+            if( (primeSum - 6) <= (primeSum - halfProPrice)) {
+                str4 += "Promotion used:\n";
+                str4 += "Deduct 6 yuan when the order reaches 30 yuan, saving 6 yuan\n";
+                str4 += "-----------------------------------\n";
+                str4 += String.format("In total: %d yuan\n", primeSum - 6);
+                str4 += "===================================";
+            } else {
+                str4 += "Promotion used:\n";
+                str4 += "Half price for certain dishes (" + names + "),saving " + halfProPrice + " yuan\n";
+                str4 += "-----------------------------------\n";
+                str4 += String.format("In total: %d yuan\n", primeSum - halfProPrice);
+                str4 += "===================================";
+            }
+        }
+
+        return str1 + str2 + str3 + str4;
     }
 }

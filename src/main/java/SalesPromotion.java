@@ -3,12 +3,12 @@ import java.util.List;
 public class SalesPromotion {
     private String type;
     private String displayName;
-    private List<String> relatedItems;
+    private List<String> halfSalesProItemList;
 
-    public SalesPromotion(String type, String displayName, List<String> relatedItems) {
+    public SalesPromotion(String type, String displayName, List<String> halfSalesProItemList) {
         this.type = type;
         this.displayName = displayName;
-        this.relatedItems = relatedItems;
+        this.halfSalesProItemList = halfSalesProItemList;
     }
 
     public String getType() {
@@ -19,7 +19,7 @@ public class SalesPromotion {
         return displayName;
     }
 
-    public List<String> getRelatedItems() {
-        return relatedItems;
+    public List<String> gethalfSalesProItemList() {
+        return halfSalesProItemList;
     }
 }
